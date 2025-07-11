@@ -1,0 +1,72 @@
+---
+# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumloadbalancerippool_v2alpha1.json
+apiVersion: cilium.io/v2alpha1
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: pool
+spec:
+  allowFirstLastIPs: "No"
+  blocks:
+    - cidr: "192.168.10.0/24"
+---
+# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliuml2announcementpolicy_v2alpha1.json
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: l2-policy
+spec:
+  loadBalancerIPs: true
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+
+# TODO: Revisit BGP?
+#---
+## yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumbgpadvertisement_v2alpha1.json
+#apiVersion: cilium.io/v2alpha1
+#kind: CiliumBGPAdvertisement
+#metadata:
+#  name: bgp-advertisement-config
+#  labels:
+#    advertise: bgp
+#spec:
+#  advertisements:
+#    - advertisementType: Service
+#      service:
+#        addresses:
+#          - LoadBalancerIP
+#      selector:
+#        matchExpressions:
+#          - { key: somekey, operator: NotIn, values: ["never-used-value"] }
+#---
+## yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumbgppeerconfig_v2alpha1.json
+#apiVersion: cilium.io/v2alpha1
+#kind: CiliumBGPPeerConfig
+#metadata:
+#  name: bgp-peer-config-v4
+#spec:
+#  families:
+#    - afi: ipv4
+#      safi: unicast
+#      advertisements:
+#        matchLabels:
+#          advertise: bgp
+#---
+## yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumbgpclusterconfig_v2alpha1.json
+#apiVersion: cilium.io/v2alpha1
+#kind: CiliumBGPClusterConfig
+#metadata:
+#  name: bgp-cluster-config
+#spec:
+#  nodeSelector:
+#    matchLabels:
+#      kubernetes.io/os: linux
+#  bgpInstances:
+#    - name: instance-#{ cilium_bgp_node_asn }#
+#      localASN: #{ cilium_bgp_node_asn }#
+#      peers:
+#        - name: peer-#{ cilium_bgp_router_asn }#-v4
+#          peerASN: #{ cilium_bgp_router_asn }#
+#          peerAddress: #{ cilium_bgp_router_addr }#
+#          peerConfigRef:
+#            name: bgp-peer-config-v4
