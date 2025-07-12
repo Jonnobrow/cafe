@@ -21,6 +21,7 @@ env:
 includes:
   generators: .taskfiles/generators
   utils: .taskfiles/utils
+  talos: .taskfiles/talos
 
 tasks:
   default: task --list

@@ -20,45 +20,43 @@ cniConfig:
 
 nodes:
   - hostname: "cafe-optidesk-1"
-    ipAddress: "192.168.10.10"
-    #% if item.disk.startswith('/') %#
-    installDisk: "#{ item.disk }#"
-    #% else %#
-    installDiskSelector:
-      serial: "#{ item.disk }#"
-    #% endif %#
+    ipAddress: "192.168.10.1"
+    installDisk: /dev/sda
     machineSpec:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "#{ item.mac_addr | lower }#"
+          hardwareAddr: "e4:54:e8:73:a2:04"
         dhcp: false
         addresses:
-          - "192.168.10.10/24"
+          - "192.168.10.1/16"
         routes:
           - network: "0.0.0.0/0"
-            gateway: "192.168.10.1/24"
+            gateway: "192.168.0.1"
         mtu: 1500
         vip:
           ip: "192.168.10.210"
-    patches:
-      - # Encrypt system disk with TPM
-        |-
-        machine:
-          systemDiskEncryption:
-            state:
-              provider: luks2
-              keys:
-                - slot: 0
-                  tpm: {}
-            ephemeral:
-              provider: luks2
-              keys:
-                - slot: 0
-                  tpm: {}
-
+  - hostname: "cafe-optidesk-2"
+    ipAddress: "192.168.10.2"
+    installDisk: /dev/sda
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
+    controlPlane: true
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "e4:54:e8:73:a2:04"
+        dhcp: false
+        addresses:
+          - "192.168.10.2/16"
+        routes:
+          - network: "0.0.0.0/0"
+            gateway: "192.168.0.1"
+        mtu: 1500
+        vip:
+          ip: "192.168.10.210"
 
 # Global patches
 patches:
