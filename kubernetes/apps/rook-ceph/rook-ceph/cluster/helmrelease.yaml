@@ -73,18 +73,17 @@ spec:
       storage:
         useAllNodes: true
         useAllDevices: false
-        devicePathFilter: 
         config:
           osdsPerDevice: "1"
         nodes:
           - name: "cafe-optidesk-1"
-            device:
-              - name: "nvme0n1p1"
+            devices:
+              - name: "/dev/nvme0n1p1"
           - name: "cafe-optidesk-2"
-            device:
-              - name: "nvme0n1p1"
+            devices:
+              - name: "/dev/nvme0n1p1"
           - name: "cafe-vm-1"
-            device:
+            devices:
               - name: "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"
     cephBlockPools:
       - name: ceph-blockpool
