@@ -26,6 +26,12 @@ nodes:
       secureboot: true
     talosImageURL: factory.talos.dev/installer-secureboot/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
     controlPlane: true
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/iscsi-tools
+            - siderolabs/util-linux-tools
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "e4:54:e8:73:a2:04"
@@ -53,6 +59,13 @@ nodes:
               keys:
                 - slot: 0
                   tpm: {}
+    userVolumes:
+      - name: longhorn
+        provisioning:
+          diskSelector:
+            match: "'/dev/disk/by-id/nvme-CT1000P3PSSD8_24534D2F096C' in disk.symlinks"
+          minSize: 10GiB
+          grow: true
   - hostname: "cafe-optidesk-2"
     ipAddress: "192.168.10.2"
     installDisk: /dev/disk/by-id/ata-VK000480GXAWK_21203027BB38
@@ -60,6 +73,12 @@ nodes:
       secureboot: true
     talosImageURL: factory.talos.dev/installer-secureboot/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
     controlPlane: true
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/iscsi-tools
+            - siderolabs/util-linux-tools
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "00:4e:01:9e:f2:11"
@@ -87,13 +106,26 @@ nodes:
               keys:
                 - slot: 0
                   tpm: {}
+    userVolumes:
+      - name: longhorn
+        provisioning:
+          diskSelector:
+            match: "'/dev/disk/by-id/nvme-CT1000P3PSSD8_24534D2F0964' in disk.symlinks"
+          minSize: 10GiB
+          grow: true
   - hostname: cafe-vm-1
     ipAddress: "192.168.10.3"
     installDisk: /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515
     controlPlane: true
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/qemu-guest-agent
+            - siderolabs/iscsi-tools
+            - siderolabs/util-linux-tools
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "bc:24:11:84:56:d1"
@@ -106,6 +138,13 @@ nodes:
         mtu: 1500
         vip:
           ip: "192.168.10.210"
+    userVolumes:
+      - name: longhorn
+        provisioning:
+          diskSelector:
+            match: "'/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1' in disk.symlinks"
+          minSize: 10GiB
+          grow: true
 
 # Global patches
 patches:
