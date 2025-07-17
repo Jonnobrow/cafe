@@ -24,14 +24,7 @@ nodes:
     installDisk: /dev/disk/by-id/ata-Seagate_BarraCuda_Q1_SSD_ZA480CV10001_7RV00V34
     machineSpec:
       secureboot: true
-    talosImageURL: factory.talos.dev/installer-secureboot/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
     controlPlane: true
-    schematic:
-      customization:
-        systemExtensions:
-          officialExtensions:
-            - siderolabs/iscsi-tools
-            - siderolabs/util-linux-tools
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "e4:54:e8:73:a2:04"
@@ -71,14 +64,7 @@ nodes:
     installDisk: /dev/disk/by-id/ata-VK000480GXAWK_21203027BB38
     machineSpec:
       secureboot: true
-    talosImageURL: factory.talos.dev/installer-secureboot/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
     controlPlane: true
-    schematic:
-      customization:
-        systemExtensions:
-          officialExtensions:
-            - siderolabs/iscsi-tools
-            - siderolabs/util-linux-tools
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "00:4e:01:9e:f2:11"
@@ -156,6 +142,12 @@ patches:
   - "@./patches/global/machine-features.yaml"
 
 controlPlane:
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/iscsi-tools
+          - siderolabs/util-linux-tools
   patches:
     - "@./patches/controller/admission-controller-patch.yaml"
     - "@./patches/controller/cluster.yaml"

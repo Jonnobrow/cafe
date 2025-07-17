@@ -7,5 +7,3 @@ components:
   - ../../components/common
 resources:
   - ./longhorn/ks.yaml
-patchesStrategicMerge:
-  - ./namespace.yaml

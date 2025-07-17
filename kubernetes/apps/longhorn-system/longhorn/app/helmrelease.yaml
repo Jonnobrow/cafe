@@ -1,4 +1,14 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/ocirepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  interval: 1h
+  url: https://charts.longhorn.io
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -10,11 +20,11 @@ spec:
   chart:
     spec:
       chart: longhorn
-      version: 1.8.2
+      version: 1.9.0
       sourceRef:
         kind: HelmRepository
         name: longhorn
-        namespace: flux-system
+        namespace: longhorn-system
   install:
     remediation:
       retries: -1
@@ -22,4 +32,27 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  values: {}
+  values: 
+    longhornUI:
+      replicas: 1
+    defaultSettings:
+      # Disable usage reporting
+      allowCollectingLonghornUsageMetrics: false
+      defaultDataPath: /var/mnt/longhorn
+      # Running on dedicated disk, so no need to reserve
+      storageReservedPercentageForDefaultDisk: 0
+      createDefaultDiskLabeledNodes: true
+      defaultDataLocality: best-effort
+      defaultLonghornStaticStorageClass: longhorn
+      defaultReplicaCount: 3
+      guaranteedEngineManagerCPU: 12
+      nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+      replicaAutoBalance: best-effort
+      storageMinimalAvailablePercentage: 1
+    persistence:
+      defaultDataLocality: best-effort
+    ingress:
+      enabled: false
+    metrics:
+      serviceMonitor:
+        enabled: true
