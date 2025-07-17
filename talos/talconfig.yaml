@@ -160,6 +160,8 @@ patches:
   - "@./patches/global/machine-features.yaml"
 
 controlPlane:
+  nodeLabels:
+    node.longhorn.io/create-default-disk: true
   schematic:
     customization:
       systemExtensions:
