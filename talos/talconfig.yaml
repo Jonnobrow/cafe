@@ -56,7 +56,13 @@ nodes:
       - name: longhorn
         provisioning:
           diskSelector:
-            match: "'/dev/disk/by-id/nvme-CT1000P3PSSD8_24534D2F096C' in disk.symlinks"
+            match: &optidesk-1-disk "'/dev/disk/by-id/nvme-CT1000P3PSSD8_24534D2F096C' in disk.symlinks"
+          maxSize: 800GiB
+          grow: true
+      - name: ebs
+        provisioning:
+          diskSelector:
+            match: *optidesk-1-disk
           minSize: 10GiB
           grow: true
   - hostname: "cafe-optidesk-2"
@@ -96,7 +102,13 @@ nodes:
       - name: longhorn
         provisioning:
           diskSelector:
-            match: "'/dev/disk/by-id/nvme-CT1000P3PSSD8_24534D2F0964' in disk.symlinks"
+            match: &optidesk-2-disk "'/dev/disk/by-id/nvme-CT1000P3PSSD8_24534D2F0964' in disk.symlinks"
+          maxSize: 800GiB
+          grow: true
+      - name: ebs
+        provisioning:
+          diskSelector:
+            match: *optidesk-2-disk
           minSize: 10GiB
           grow: true
   - hostname: cafe-vm-1
@@ -128,7 +140,13 @@ nodes:
       - name: longhorn
         provisioning:
           diskSelector:
-            match: "'/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1' in disk.symlinks"
+            match: &vm-1-disk "'/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1' in disk.symlinks"
+          maxSize: 100GiB
+          grow: true
+      - name: ebs
+        provisioning:
+          diskSelector:
+            match: *vm-1-disk
           minSize: 10GiB
           grow: true
 
