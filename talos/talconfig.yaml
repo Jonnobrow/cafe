@@ -108,6 +108,44 @@ nodes:
             match: *optidesk-2-disk
           minSize: 10GiB
           grow: true
+  - hostname: cafe-vm-1
+    ipAddress: "192.168.10.3"
+    installDisk: /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi0
+    machineSpec:
+      secureboot: false
+    controlPlane: true
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/qemu-guest-agent
+            - siderolabs/iscsi-tools
+            - siderolabs/util-linux-tools
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "bc:24:11:84:56:d1"
+        dhcp: false
+        addresses:
+          - "192.168.10.3/16"
+        routes:
+          - network: "0.0.0.0/0"
+            gateway: "192.168.0.1"
+        mtu: 1500
+        vip:
+          ip: "192.168.10.210"
+    userVolumes:
+      - name: longhorn
+        provisioning:
+          diskSelector:
+            match: &vm-1-disk "'/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1' in disk.symlinks"
+          maxSize: 100GiB
+          grow: true
+      - name: ebs
+        provisioning:
+          diskSelector:
+            match: *vm-1-disk
+          minSize: 10GiB
+          grow: true
 
 # Global patches
 patches:
