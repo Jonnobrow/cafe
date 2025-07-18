@@ -5,7 +5,3 @@ machine:
     net.core.rmem_max: "7500000" # Cloudflared | QUIC
     net.core.wmem_max: "7500000" # Cloudflared | QUIC
     vm.nr_hugepages: "1024" # Longhorn V2 Data Engine
-  kernel:
-    modules:
-      - name: nvme_tcp
-      - name: vfio_pci

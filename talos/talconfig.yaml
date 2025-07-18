@@ -70,7 +70,6 @@ nodes:
     installDisk: /dev/disk/by-id/ata-VK000480GXAWK_21203027BB38
     machineSpec:
       secureboot: true
-    controlPlane: true
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "00:4e:01:9e:f2:11"
@@ -81,8 +80,6 @@ nodes:
           - network: "0.0.0.0/0"
             gateway: "192.168.0.1"
         mtu: 1500
-        vip:
-          ip: "192.168.10.210"
     patches:
       - # Encrypt system disk with TPM
         |-
@@ -119,17 +116,26 @@ patches:
   - "@./patches/global/machine-network.yaml"
   - "@./patches/global/machine-sysctls.yaml"
   - "@./patches/global/machine-time.yaml"
-  - "@./patches/global/machine-features.yaml"
+  - "@./patches/global/machine-kernel.yaml"
+  - "@./patches/global/machine-udev.yaml"
 
 controlPlane:
-  nodeLabels:
+  nodeLabels: &nodeLabels
     node.longhorn.io/create-default-disk: true
-  schematic:
+    intel.feature.node.kubernetes.io/gpu: true
+  schematic: &schematic
     customization:
       systemExtensions:
         officialExtensions:
           - siderolabs/iscsi-tools
           - siderolabs/util-linux-tools
+          - siderolabs/i915
+          - siderolabs/intel-ucode
   patches:
     - "@./patches/controller/admission-controller-patch.yaml"
     - "@./patches/controller/cluster.yaml"
+    - "@./patches/global/machine-features.yaml"
+
+worker:
+  nodeLabels: *nodeLabels
+  schematic: *schematic
