@@ -22,6 +22,9 @@ nodes:
   - hostname: "cafe-optidesk-1"
     ipAddress: "192.168.10.1"
     installDisk: /dev/disk/by-id/ata-Seagate_BarraCuda_Q1_SSD_ZA480CV10001_7RV00V34
+    nodeLabels:
+      intel.feature.node.kubernetes.io/gpu: true
+      node.longhorn.io/create-default-disk: true
     machineSpec:
       secureboot: true
     controlPlane: true
@@ -37,7 +40,15 @@ nodes:
         mtu: 1500
         vip:
           ip: "192.168.10.210"
-    patches:
+    schematic: &intel-schematic
+      customization:
+        systemExtensions:
+          officialExtensions:
+          - siderolabs/i915
+          - siderolabs/intel-ucode
+          - siderolabs/iscsi-tools
+          - siderolabs/util-linux-tools
+    patches: &secureboot-patch
       - # Encrypt system disk with TPM
         |-
         machine:
@@ -68,8 +79,12 @@ nodes:
   - hostname: "cafe-optidesk-2"
     ipAddress: "192.168.10.2"
     installDisk: /dev/disk/by-id/ata-VK000480GXAWK_21203027BB38
+    nodeLabels:
+      intel.feature.node.kubernetes.io/gpu: true
+      node.longhorn.io/create-default-disk: true
     machineSpec:
       secureboot: true
+    controlPlane: true
     networkInterfaces:
       - deviceSelector:
           hardwareAddr: "00:4e:01:9e:f2:11"
@@ -80,21 +95,8 @@ nodes:
           - network: "0.0.0.0/0"
             gateway: "192.168.0.1"
         mtu: 1500
-    patches:
-      - # Encrypt system disk with TPM
-        |-
-        machine:
-          systemDiskEncryption:
-            state:
-              provider: luks2
-              keys:
-                - slot: 0
-                  tpm: {}
-            ephemeral:
-              provider: luks2
-              keys:
-                - slot: 0
-                  tpm: {}
+    schematic: *intel-schematic
+    patches: *secureboot-patch
     userVolumes:
       - name: longhorn
         provisioning:
@@ -114,6 +116,8 @@ nodes:
     machineSpec:
       secureboot: false
     controlPlane: true
+    nodeLabels:
+      node.longhorn.io/create-default-disk: true
     schematic:
       customization:
         systemExtensions:
@@ -156,24 +160,9 @@ patches:
   - "@./patches/global/machine-time.yaml"
   - "@./patches/global/machine-kernel.yaml"
   - "@./patches/global/machine-udev.yaml"
+  - "@./patches/global/machine-features.yaml"
 
 controlPlane:
-  nodeLabels: &nodeLabels
-    node.longhorn.io/create-default-disk: true
-    intel.feature.node.kubernetes.io/gpu: true
-  schematic: &schematic
-    customization:
-      systemExtensions:
-        officialExtensions:
-          - siderolabs/iscsi-tools
-          - siderolabs/util-linux-tools
-          - siderolabs/i915
-          - siderolabs/intel-ucode
   patches:
     - "@./patches/controller/admission-controller-patch.yaml"
     - "@./patches/controller/cluster.yaml"
-    - "@./patches/global/machine-features.yaml"
-
-worker:
-  nodeLabels: *nodeLabels
-  schematic: *schematic
