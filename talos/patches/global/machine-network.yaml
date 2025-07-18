@@ -4,3 +4,7 @@ machine:
     nameservers:
       - 1.1.1.1
       - 1.0.0.1
+    extraHostEntries:
+      - ip: 192.168.4.4
+        aliases:
+          - cappuccino.internal

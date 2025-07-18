@@ -95,8 +95,8 @@ spec:
         existingClaim: qbittorrent
       media:
         type: nfs
-        server: 192.168.4.4
-        path: /mnt/tank/tmp-media/downloads
+        server: capuccino.internal
+        path: /tmp-media/downloads
         globalMounts:
           - path: /media/Downloads/qbittorrent
             subPath: qbittorrent

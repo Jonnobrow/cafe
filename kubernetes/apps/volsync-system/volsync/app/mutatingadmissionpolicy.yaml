@@ -98,8 +98,8 @@ spec:
               value: Object.spec.template.spec.volumes{
                 name: "repository",
                 nfs: Object.spec.template.spec.volumes.nfs{
-                  server: "192.168.4.4",
-                  path: "/mnt/tank/volsync"
+                  server: "cappuccino.internal",
+                  path: "/volsync"
                 }
               }
             }
