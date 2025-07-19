@@ -29,10 +29,18 @@ spec:
               QBT_WEBUI_PORT: &port 80
               QBT_TORRENTING_PORT: &torrentPort 50413
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
-              readiness:
-                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v2/app/version
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
               startup:
                 enabled: true
                 spec:
@@ -46,7 +54,7 @@ spec:
               requests:
                 cpu: 100m
               limits:
-                memory: 8Gi
+                memory: 4Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
