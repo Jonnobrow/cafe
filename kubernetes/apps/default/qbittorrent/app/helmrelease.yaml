@@ -55,37 +55,6 @@ spec:
                 cpu: 100m
               limits:
                 memory: 4Gi
-
-          gluetun:
-            dependsOn: app
-            image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.39.0
-            env:
-              VPN_TYPE: wireguard
-              VPN_INTERFACE: wg0
-              VPN_SERVICE_PROVIDER: mullvad
-            envFrom:
-              - secretRef:
-                  name: gluetun-config
-            securityContext:
-              capabilities:
-                add:
-                  - NET_ADMIN
-
-          port-forward:
-            dependsOn: gluetun
-            image:
-              repository: docker.io/snoringdragon/gluetun-qbittorrent-port-manager
-              tag: "1.0"
-            env:
-              - name: QBITTORRENT_SERVER
-                value: localhost
-              - name: QBITTORRENT_PORT
-                value: "80"
-              - name: PORT_FORWARDED
-                value: "/tmp/gluetun/forwarded_port"
-
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -124,27 +93,12 @@ spec:
     persistence:
       config:
         existingClaim: qbittorrent
-        advancedMounts:
-          qbittorrent:
-            app:
-              - path: /config
       media:
         type: nfs
         server: cappuccino.internal
         path: /tmp-media/downloads
-        advancedMounts:
-          qbittorrent:
-            app:
-              - path: /media/Downloads/qbittorrent
-                subPath: qbittorrent
+        globalMounts:
+          - path: /media/Downloads/qbittorrent
+            subPath: qbittorrent
       tmp:
         type: emptyDir
-      gluetun-data:
-        type: emptyDir
-        advancedMounts:
-          qbittorrent:
-            gluetun:
-              - path: /tmp/gluetun
-            port-forward:
-              - path: /tmp/gluetun
-
