@@ -1,4 +1,18 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: pihole-dns
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 1.18.0
+  url: oci://ghcr.io/home-operations/charts-mirror/external-dns
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -6,14 +20,9 @@ metadata:
   name: &app pihole-dns
 spec:
   interval: 1h
-  chart:
-    spec:
-      chart: external-dns
-      version: 1.17.0
-      sourceRef:
-        kind: HelmRepository
-        name: external-dns
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: pihole-dns
   install:
     remediation:
       retries: -1
@@ -34,13 +43,11 @@ spec:
     extraArgs:
       - --pihole-server=http://192.168.4.54
       - --pihole-api-version=6
-      - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
-      - --crd-source-kind=DNSEndpoint
       - --gateway-name=internal
     triggerLoopOnEvent: true
     registry: noop
     policy: upsert-only
-    sources: ["crd", "gateway-httproute"]
+    sources: ["gateway-httproute", "service"]
     domainFilters: ["${SECRET_DOMAIN}"]
     serviceMonitor:
       enabled: true
