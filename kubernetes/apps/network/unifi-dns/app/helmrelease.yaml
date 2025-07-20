@@ -63,7 +63,7 @@ spec:
     sources: ["gateway-httproute", "service"]
     txtOwnerId: main
     txtPrefix: k8s.main.
-    domainFilters: ["${SECRET_DOMAIN}"]
+    domainFilters: ["jonnobrow.co.uk"]
     serviceMonitor:
       enabled: true
     podAnnotations:
