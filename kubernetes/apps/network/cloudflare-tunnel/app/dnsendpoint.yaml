@@ -8,4 +8,4 @@ spec:
   endpoints:
     - dnsName: "external.jonnobrow.co.uk"
       recordType: CNAME
-      targets: ["cd3ff121-919f-4e50-970f-73d0b46bc012.cfargotunnel.com"]
+      targets: ["509ffe7f-bed9-4765-8a56-ae85427bfc22.cfargotunnel.com"]
