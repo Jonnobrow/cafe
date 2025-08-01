@@ -43,21 +43,6 @@ nodes:
             - siderolabs/intel-ucode
             - siderolabs/iscsi-tools
             - siderolabs/util-linux-tools
-    patches: &secureboot-patch
-      - # Encrypt system disk with TPM
-        |-
-        machine:
-          systemDiskEncryption:
-            state:
-              provider: luks2
-              keys:
-                - slot: 0
-                  tpm: {}
-            ephemeral:
-              provider: luks2
-              keys:
-                - slot: 0
-                  tpm: {}
     userVolumes:
       - name: longhorn
         provisioning:
@@ -86,7 +71,6 @@ nodes:
             gateway: "192.168.0.1"
         mtu: 1500
     schematic: *intel-schematic
-    patches: *secureboot-patch
     userVolumes:
       - name: longhorn
         provisioning:
@@ -102,11 +86,11 @@ nodes:
           grow: true
   - hostname: "cafe-optidesk-3"
     ipAddress: "192.168.10.3"
-    installDisk: /dev/disk/by-id/TBC
+    installDisk: /dev/disk/by-id/ata-CT480BX500SSD1_2036E4AE1C94
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "TBC"
+          hardwareAddr: "e4:54:e8:70:76:e4"
         dhcp: false
         addresses:
           - "192.168.10.3/16"
@@ -115,12 +99,11 @@ nodes:
             gateway: "192.168.0.1"
         mtu: 1500
     schematic: *intel-schematic
-    patches: *secureboot-patch
     userVolumes:
       - name: longhorn
         provisioning:
           diskSelector:
-            match: &optidesk-3-disk "'/dev/disk/by-id/TBC' in disk.symlinks"
+            match: &optidesk-3-disk "'/dev/disk/by-id/nvme-CT1000P3PSSD8_24514CF148A9' in disk.symlinks"
           maxSize: 800GiB
           grow: true
       - name: ebs
