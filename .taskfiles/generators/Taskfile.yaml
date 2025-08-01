@@ -41,6 +41,8 @@ tasks:
     dir: "{{.TALOS_DIR}}"
     cmds:
       - task: talos-config
+        vars:
+          EXTRA_ARGS: '--extra-flags="--insecure"'
       - until talhelper gencommand bootstrap | bash; do sleep 10; done
       - task: :kubeconfig
     preconditions: &talos_preconditions
@@ -55,8 +57,10 @@ tasks:
     cmds:
       - "[ -f talsecret.sops.yaml ] || talhelper gensecret | sops --filename-override talos/talsecret.sops.yaml --encrypt /dev/stdin > talsecret.sops.yaml"
       - talhelper genconfig
-      - talhelper gencommand apply --extra-flags="--insecure" | bash
+      - talhelper gencommand apply {{.EXTRA_ARGS}} | bash
     preconditions: *talos_preconditions
+    vars:
+      EXTRA_ARGS: ""
 
   :kubeconfig:
     desc: Get the kubeconfig for the cluster

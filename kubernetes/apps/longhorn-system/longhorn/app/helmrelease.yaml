@@ -11,7 +11,7 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 1.9.0
+    tag: 1.9.1
   url: oci://ghcr.io/home-operations/charts-mirror/longhorn
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
@@ -33,7 +33,7 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  values: 
+  values:
     longhornUI:
       replicas: 1
     defaultSettings:
