@@ -96,7 +96,7 @@ spec:
       media:
         type: nfs
         server: cappuccino.internal
-        path: /tmp-media/downloads
+        path: /downloads
         globalMounts:
           - path: /media/Downloads/qbittorrent
             subPath: qbittorrent
