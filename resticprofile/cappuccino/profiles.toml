@@ -1,0 +1,83 @@
+version = "1"
+
+#:schema https://creativeprojects.github.io/resticprofile/jsonschema/config-1.json
+[default]
+repository = "sftp://backup/./restic/cappuccino"
+password-file = "backupbox-key"
+lock = "/tmp/resticprofile-{{.Profile.Name}}.lock"
+initialize = false
+env-file = "resticprofile.env"
+systemd-drop-in-files = ["99-hc-ping-key-drop-in.conf"]
+
+[default.retention]
+before-backup = false
+after-backup = true
+keep-hourly = 24
+keep-daily = 7
+keep-weekly = 4
+keep-monthly = 6
+keep-tag = ["forever"]
+prune = true
+
+[default.backup]
+check-before = true
+exclude-file = ["excludes-{{.Profile.Name}}", "excludes"]
+exclude-caches = true
+tag = ["{{ .Profile.Name }}", "cappuccino"]
+schedule-permission = "system"
+schedule-log = "/var/log/resticprofile-{{.Profile.Name}}.log"
+schedule-after-network-online = true
+schedule-lock-wait = "30m"
+
+[default.backup.send-before]
+method = "HEAD"
+url = "https://hc-ping.com/{{.Env.HC_PING_KEY}}/cappuccino-{{.Profile.Name}}/start"
+
+[default.backup.send-after]
+method = "HEAD"
+url = "https://hc-ping.com/{{.Env.HC_PING_KEY}}/cappuccino-{{.Profile.Name}}"
+
+[default.backup.send-after-fail]
+method = "POST"
+url = "https://hc-ping.com/{{.Env.HC_PING_KEY}}/cappuccino-{{.Profile.Name}}/fail"
+body = "${ERROR}\n\n${ERROR_STDERR}"
+
+[default.backup.send-after-fail.headers]
+name = "Content-Type"
+value = "text/plain; charset=UTF-8"
+
+[photos]
+inherit = "default"
+initialize = true
+
+[photos.backup]
+source = ["/mnt/tank/photos"]
+schedule = "hourly"
+
+[haos-backups]
+inherit = "default"
+initialize = true
+
+[haos-backups.backup]
+source = ["/mnt/tank/haos-backups"]
+schedule = "daily"
+
+[family-videos]
+inherit = "default"
+initialize = true
+
+[family-videos.backup]
+source = ["/mnt/tank/family-videos"]
+schedule = "daily"
+
+[system]
+inherit = "default"
+initialize = true
+
+[system.backup]
+source = [
+  "/root/observability",
+  "/root/.config/resticprofile",
+  "/etc/exports"
+]
+schedule = "daily"

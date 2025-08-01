@@ -11,6 +11,11 @@ creation_rules:
     age: |
       age1npm76t7g67zlgjmkpppetysk66m4vaf8jstm22cmwv9phm0zxe9qdfye33,
       age1lm9yjzpt3a5wrk3k5qn6ahkj5qmqyttmk6vn7cadxydrwew0cflq2xlzhe
+  - path_regex: resticprofile/.*(key|\.env)
+    mac_only_encrypted: true
+    age: |
+      age1npm76t7g67zlgjmkpppetysk66m4vaf8jstm22cmwv9phm0zxe9qdfye33,
+      age1lm9yjzpt3a5wrk3k5qn6ahkj5qmqyttmk6vn7cadxydrwew0cflq2xlzhe
 stores:
   yaml:
     indent: 2

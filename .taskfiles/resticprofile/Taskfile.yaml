@@ -1,0 +1,52 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+tasks:
+  :resticprofile:
+    desc: Setup Restic
+    cmds:
+      - task: install
+      - task: install-config
+      - task: schedule
+    requires:
+      vars: [HOST]
+
+  install:
+    desc: Install restic and resticprofile
+    cmds:
+      - cmd: |
+          curl -sSL \
+            https://raw.githubusercontent.com/upciti/wakemeops/main/assets/install_repository \
+          | ssh -t "{{.HOST}}" "sudo bash"
+          ssh -t "{{.HOST}}" "sudo apt install resticprofile"
+    requires:
+      vars: [HOST]
+
+  install-config:
+    desc: Install resticprofile config
+    dir: "{{.RESTICPROFILE_DIR}}/{{.HOST}}"
+    cmds:
+      - cmd: |
+          ssh -t "{{.HOST}}" "sudo mkdir -p /root/.config/resticprofile"
+          for file in *; do
+            if sops filestatus "$file" | jq --exit-status ".encrypted == true" &>/dev/null; then
+              sops -d "$file" | ssh -t "{{.HOST}}" "sudo tee /root/.config/resticprofile/$file"
+            else
+              cat "$file" | ssh -t "{{.HOST}}" "sudo tee /root/.config/resticprofile/$file"
+            fi
+          done
+    requires:
+      vars: [HOST]
+    preconditions:
+      - test -f {{.SOPS_AGE_KEY_FILE}}
+      - test -f {{.ROOT_DIR}}/.sops.yaml
+      - which sops
+
+  schedule:
+    desc: Run resticprofile schedule
+    cmds:
+      - cmd: |
+          ssh -t "{{.HOST}}" "sudo resticprofile schedule --all"
+    requires:
+      vars: [HOST]
