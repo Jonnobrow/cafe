@@ -1,9 +1,8 @@
 ---
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
-version: '3'
+version: "3"
 
 tasks:
-
   :init:
     desc: Generate everything
     cmds:
@@ -37,17 +36,31 @@ tasks:
       - test -f {{.ROOT_DIR}}/github-push-token.txt
 
   # Talos Config
-  talos-config:
+  talos-bootstrap:
     desc: Bootstrap the Talos cluster
-    dir: '{{.TALOS_DIR}}'
+    dir: "{{.TALOS_DIR}}"
     cmds:
-      - '[ -f talsecret.sops.yaml ] || talhelper gensecret | sops --filename-override talos/talsecret.sops.yaml --encrypt /dev/stdin > talsecret.sops.yaml'
-      - talhelper genconfig
-      - talhelper gencommand apply --extra-flags="--insecure" | bash
+      - task: talos-config
       - until talhelper gencommand bootstrap | bash; do sleep 10; done
-      - until talhelper gencommand kubeconfig --extra-flags="{{.ROOT_DIR}} --force" | bash; do sleep 10; done
-    preconditions:
+      - task: :kubeconfig
+    preconditions: &talos_preconditions
       - test -f {{.ROOT_DIR}}/.sops.yaml
       - test -f {{.SOPS_AGE_KEY_FILE}}
       - test -f {{.TALOS_DIR}}/talconfig.yaml
       - which talhelper talosctl sops
+
+  talos-config:
+    desc: Generate and apply Talos Config on all nodes
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - "[ -f talsecret.sops.yaml ] || talhelper gensecret | sops --filename-override talos/talsecret.sops.yaml --encrypt /dev/stdin > talsecret.sops.yaml"
+      - talhelper genconfig
+      - talhelper gencommand apply --extra-flags="--insecure" | bash
+    preconditions: *talos_preconditions
+
+  :kubeconfig:
+    desc: Get the kubeconfig for the cluster
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - until talhelper gencommand kubeconfig --extra-flags="{{.ROOT_DIR}} --force" | bash; do sleep 10; done
+    preconditions: *talos_preconditions
