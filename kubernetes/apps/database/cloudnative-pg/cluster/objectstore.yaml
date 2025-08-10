@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/barmancloud.cnpg.io/objectstore_v1.json
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: r2
+spec:
+  retentionPolicy: 10d
+  configuration:
+    data:
+      compression: bzip2
+    wal:
+      compression: bzip2
+      maxParallel: 8
+    destinationPath: s3://jonnobrow-postgres
+    endpointURL: ${R2_ENDPOINT}
+    # Note: serverName version needs to be inclemented
+    # when recovering from an existing cnpg cluster
+    s3Credentials:
+      accessKeyId:
+        name: cloudnative-pg-secret
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: cloudnative-pg-secret
+        key: AWS_SECRET_ACCESS_KEY
+      region:
+        name: cloudnative-pg-secret
+        key: AWS_REGION
+  instanceSidecarConfiguration:
+    env:
+      - name: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required
+      - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required

@@ -1,0 +1,56 @@
+---
+# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.5-21
+  instances: 3
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 40Gi
+    storageClass: openebs-hostpath
+  superuserSecret:
+    name: cloudnative-pg-secret
+  enableSuperuserAccess: true
+  postgresql:
+    synchronous:
+      method: any
+      number: 1
+    parameters:
+      max_connections: "400"
+      shared_buffers: 256MB
+  nodeMaintenanceWindow:
+    inProgress: false
+    reusePVC: true
+  enablePDB: false
+  resources:
+    requests:
+      cpu: 250m
+    limits:
+      memory: 4Gi
+  monitoring:
+    enablePodMonitor: true
+    # Ref: https://github.com/cloudnative-pg/cloudnative-pg/issues/2501
+    podMonitorMetricRelabelings:
+      - {
+          sourceLabels: ["cluster"],
+          targetLabel: cnpg_cluster,
+          action: replace,
+        }
+      - { regex: cluster, action: labeldrop }
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters: &parameters
+        barmanObjectName: r2
+        serverName: postgres
+  bootstrap:
+    recovery:
+      source: clusterBackup
+  externalClusters:
+    - name: clusterBackup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters: *parameters
