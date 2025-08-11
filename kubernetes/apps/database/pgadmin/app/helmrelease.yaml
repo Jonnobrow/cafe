@@ -68,7 +68,7 @@ spec:
                   type: PathPrefix
                   value: /
             backendRefs:
-              - name: app
+              - name: *app
                 port: *port
 
     persistence:
