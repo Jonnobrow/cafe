@@ -3,11 +3,11 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "jonnobrow-co-uk-production"
+  name: "${CLUSTER_DOMAIN/./-}-production"
 spec:
-  secretName: "jonnobrow-co-uk-production-tls"
+  secretName: "${CLUSTER_DOMAIN/./-}-production-tls"
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
-  commonName: "jonnobrow.co.uk"
-  dnsNames: ["jonnobrow.co.uk", "*.jonnobrow.co.uk"]
+  commonName: "${CLUSTER_DOMAIN}"
+  dnsNames: ["${CLUSTER_DOMAIN}", "*.${CLUSTER_DOMAIN}"]

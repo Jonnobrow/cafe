@@ -44,8 +44,8 @@ spec:
               PAPERLESS_PORT: &port 80
               PAPERLESS_REDIS: redis://dragonfly.database.svc.cluster.local:6379
               PAPERLESS_TASK_WORKERS: 2
-              PAPERLESS_URL: https://paperless.jonnobrow.co.uk
-              PAPERLESS_ALLOWED_HOSTS: paperless.jonnobrow.co.uk
+              PAPERLESS_URL: https://paperless.${CLUSTER_DOMAIN}
+              PAPERLESS_ALLOWED_HOSTS: paperless.${CLUSTER_DOMAIN}
               PAPERLESS_FILENAME_FORMAT: "{{`{{ created_year }}/{{ correspondent }}/{{ created }}-{{ title }}`}}"
               PAPERLESS_CONSUMPTION_DIR: /library/consume
               PAPERLESS_DATA_DIR: /library/data
@@ -53,7 +53,7 @@ spec:
               PAPERLESS_EXPORT_DIR: /library/export
               PAPERLESS_CONSUMER_POLLING: 60
               PAPERLESS_CONSUMER_IGNORE_PATTERNS: '[".DS_STORE/*", "._*", ".stfolder/*", "@eaDir/*"]'
-              PAPERLESS_TRUSTED_PROXIES: 10.42.0.0/16
+              PAPERLESS_TRUSTED_PROXIES: "${NETWORK_K8S_POD_CIDR}"
               PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
               PAPERLESS_CONSUMER_RECURSIVE: true
               PAPERLESS_OCR_LANGUAGE: eng
@@ -74,7 +74,7 @@ spec:
     route:
       app:
         hostnames:
-          - paperless.jonnobrow.co.uk
+          - paperless.${CLUSTER_DOMAIN}
         parentRefs:
           - name: external
             namespace: kube-system

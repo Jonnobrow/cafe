@@ -5,31 +5,31 @@ kind: Gateway
 metadata:
   name: external
   annotations:
-    external-dns.alpha.kubernetes.io/target: "external.jonnobrow.co.uk"
+    external-dns.alpha.kubernetes.io/target: "external.${CLUSTER_DOMAIN}"
 spec:
   gatewayClassName: cilium
   addresses:
     - type: IPAddress
-      value: "192.168.10.201"
+      value: "${GATEWAY_EXTERNAL_IPV4}"
   infrastructure:
     annotations:
-      external-dns.alpha.kubernetes.io/hostname: "external.jonnobrow.co.uk"
+      external-dns.alpha.kubernetes.io/hostname: "external.${CLUSTER_DOMAIN}"
   listeners:
     - name: http
       protocol: HTTP
       port: 80
-      hostname: "*.jonnobrow.co.uk"
+      hostname: "*.${CLUSTER_DOMAIN}"
       allowedRoutes:
         namespaces:
           from: Same
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: "*.jonnobrow.co.uk"
+      hostname: "*.${CLUSTER_DOMAIN}"
       allowedRoutes:
         namespaces:
           from: All
       tls:
         certificateRefs:
           - kind: Secret
-            name: jonnobrow-co-uk-production-tls
+            name: ${CLUSTER_DOMAIN/./-}-production-tls

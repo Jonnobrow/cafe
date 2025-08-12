@@ -5,7 +5,7 @@ kind: HTTPRoute
 metadata:
   name: longhorn-ui
 spec:
-  hostnames: ["longhorn.jonnobrow.co.uk"]
+  hostnames: ["longhorn.${CLUSTER_DOMAIN}"]
   parentRefs:
     - name: internal
       namespace: kube-system

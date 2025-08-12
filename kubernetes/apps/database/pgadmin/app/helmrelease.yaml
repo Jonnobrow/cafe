@@ -61,7 +61,7 @@ spec:
             namespace: kube-system
             sectionName: https
         hostnames:
-          - pgadmin.jonnobrow.co.uk
+          - pgadmin.${CLUSTER_DOMAIN}
         rules:
           - matches:
               - path:

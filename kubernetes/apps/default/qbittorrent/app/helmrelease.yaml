@@ -80,8 +80,8 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.jonnobrow.co.uk"
-          - qb.jonnobrow.co.uk
+          - "{{ .Release.Name }}.${CLUSTER_DOMAIN}"
+          - qb.${CLUSTER_DOMAIN}
         parentRefs:
           - name: internal
             namespace: kube-system
