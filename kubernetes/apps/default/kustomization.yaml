@@ -8,3 +8,4 @@ components:
 resources:
   - ./qbittorrent/ks.yaml
   - ./paperless-ngx/ks.yaml
+  - ./nextcloud/ks.yaml
