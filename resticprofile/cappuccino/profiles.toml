@@ -27,6 +27,7 @@ tag = ["{{ .Profile.Name }}", "cappuccino"]
 schedule-permission = "system"
 schedule-log = "/var/log/resticprofile-{{.Profile.Name}}.log"
 schedule-after-network-online = true
+schedule-lock-mode = "default"
 schedule-lock-wait = "30m"
 
 [default.backup.send-before]
@@ -60,7 +61,7 @@ initialize = true
 
 [haos-backups.backup]
 source = ["/mnt/tank/haos-backups"]
-schedule = "daily"
+schedule = "0:45"
 
 [family-videos]
 inherit = "default"
@@ -68,7 +69,7 @@ initialize = true
 
 [family-videos.backup]
 source = ["/mnt/tank/family-videos"]
-schedule = "daily"
+schedule = "0:30"
 
 [system]
 inherit = "default"
@@ -80,4 +81,4 @@ source = [
   "/root/.config/resticprofile",
   "/etc/exports"
 ]
-schedule = "daily"
+schedule = "0:15"
