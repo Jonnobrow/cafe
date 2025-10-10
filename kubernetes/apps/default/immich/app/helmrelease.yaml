@@ -89,6 +89,16 @@ spec:
               REDIS_REPLICATION_MODE: master
             command: ["redis-server"]
 
+      public-proxy:
+        containers:
+          main:
+            image:
+              repository: alangrainger/immich-public-proxy
+              tag: 1.5.4
+              pullPolicy: IfNotPresent
+            env:
+              IMMICH_URL: http://immich-server.default.svc.cluster.local:2283
+
     service:
       server:
         controller: server
@@ -105,10 +115,15 @@ spec:
         ports:
           http:
             port: 6379
+      public-proxy:
+        controller: public-proxy
+        ports:
+          http:
+            port: &proxy-port 3000
 
     route:
       internal:
-        hostnames: ["photos.${CLUSTER_DOMAIN}"]
+        hostnames: ["immich.${CLUSTER_DOMAIN}"]
         parentRefs:
           - name: internal
             namespace: kube-system
@@ -117,6 +132,17 @@ spec:
           - backendRefs:
               - identifier: server
                 port: *port
+
+      proxy:
+        hostnames: ["photos.${CLUSTER_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: public-proxy
+                port: *proxy-port
 
     persistence:
       matplotlib:
