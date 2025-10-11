@@ -134,7 +134,7 @@ spec:
                 port: *port
 
       proxy:
-        hostnames: ["photos.${CLUSTER_DOMAIN}"]
+        hostnames: ["img.${CLUSTER_DOMAIN}"]
         parentRefs:
           - name: external
             namespace: kube-system
@@ -147,6 +147,9 @@ spec:
               - path:
                   type: PathPrefix
                   value: /share/
+              - path:
+                  type: PathPrefix
+                  value: /s/
 
     persistence:
       matplotlib:
