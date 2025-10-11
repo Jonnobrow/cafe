@@ -94,7 +94,7 @@ spec:
           main:
             image:
               repository: alangrainger/immich-public-proxy
-              tag: 1.5.4
+              tag: 1.13.4
               pullPolicy: IfNotPresent
             env:
               IMMICH_URL: http://immich-server.default.svc.cluster.local:2283
@@ -123,7 +123,7 @@ spec:
 
     route:
       internal:
-        hostnames: ["immich.${CLUSTER_DOMAIN}"]
+        hostnames: ["photos.${CLUSTER_DOMAIN}"]
         parentRefs:
           - name: internal
             namespace: kube-system
@@ -143,6 +143,10 @@ spec:
           - backendRefs:
               - identifier: public-proxy
                 port: *proxy-port
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /share/
 
     persistence:
       matplotlib:
