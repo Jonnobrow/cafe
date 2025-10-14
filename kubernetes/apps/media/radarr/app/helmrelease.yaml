@@ -3,49 +3,48 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app qbittorrent
+  name: radarr
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: app-template
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
+  interval: 1h
   values:
     controllers:
-      qbittorrent:
+      radarr:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/qbittorrent
-              tag: 5.1.2@sha256:a724f86a39fa637fc4ff81165585d7273dc9dcd9ca59818a34e9fa9c467dd26c
+              repository: ghcr.io/home-operations/radarr
+              tag: 6.0.2.10271@sha256:12b8348c57c556d837d28bbc73a8837fb7f402a29aba40385a0513dbd068881b
             env:
+              RADARR__APP__INSTANCENAME: Radarr
+              RADARR__APP__THEME: dark
+              RADARR__AUTH__METHOD: External
+              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              RADARR__LOG__DBENABLED: "False"
+              RADARR__LOG__LEVEL: info
+              RADARR__SERVER__PORT: &port 80
+              RADARR__UPDATE__BRANCH: develop
               TZ: Europe/London
-              QBT_WEBUI_PORT: &port 80
-              QBT_TORRENTING_PORT: &torrentPort 50413
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /api/v2/app/version
+                    path: /ping
                     port: *port
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-              startup:
-                enabled: true
-                spec:
-                  failureThreshold: 30
-                  periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -64,41 +63,25 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
-        forceRename: *app
-        primary: true
         ports:
           http:
             port: *port
-      bittorrent:
-        type: LoadBalancer
-        annotations:
-          lbipam.cilium.io/ips: 192.168.10.203
-        ports:
-          bittorrent-tcp:
-            port: *torrentPort
-            protocol: TCP
     route:
       app:
         hostnames:
           - "{{ .Release.Name }}.${CLUSTER_DOMAIN}"
-          - qb.${CLUSTER_DOMAIN}
         parentRefs:
           - name: internal
             namespace: kube-system
             sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
     persistence:
       config:
-        existingClaim: qbittorrent
+        existingClaim: "{{ .Release.Name }}"
       media:
         type: nfs
         server: cappuccino.internal
         path: /media
         globalMounts:
-          - path: /media/Downloads/qbittorrent
-            subPath: downloads/qbittorrent
+          - path: /media
       tmp:
         type: emptyDir
