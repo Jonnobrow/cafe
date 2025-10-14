@@ -98,7 +98,7 @@ spec:
         server: cappuccino.internal
         path: /media
         globalMounts:
-          - path: /media/Downloads/qbittorrent
+          - path: /media/downloads/qbittorrent
             subPath: downloads/qbittorrent
       tmp:
         type: emptyDir
