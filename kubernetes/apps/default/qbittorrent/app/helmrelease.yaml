@@ -19,41 +19,6 @@ spec:
   values:
     controllers:
       qbittorrent:
-        initContainers:
-          coredns:
-            image:
-              repository: mirror.gcr.io/coredns/coredns
-              tag: 1.13.1@sha256:9b9128672209474da07c91439bf15ed704ae05ad918dd6454e5b6ae14e35fee6
-            args:
-              - -conf
-              - /etc/coredns/Corefile
-            restartPolicy: Always
-          gluetun:
-            dependsOn:
-              - coredns
-            image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.40.0@sha256:2b42bfa046757145a5155acece417b65b4443c8033fb88661a8e9dcf7fda5a00
-            env:
-              DOT: "off"
-              DNS_ADDRESS: "127.0.0.2"
-              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: &gluetunAuthPath /gluetun/auth.toml
-              VPN_TYPE: openvpn
-              VPN_INTERFACE: tun0
-              VPN_SERVICE_PROVIDER: protonvpn
-              VPN_PORT_FORWARDING: on
-              VPN_PORT_FORWARDING_PROVIDER: protonvpn
-              FIREWALL_INPUT_PORTS: 80
-              FIREWALL_OUTBOUND_SUBNETS: "${NETWORK_K8S_POD_CIDR},${NETWORK_K8S_SERVICE_CIDR}"
-            envFrom:
-              - secretRef:
-                  name: qbittorrent-secret
-            restartPolicy: Always
-            securityContext:
-              capabilities:
-                add:
-                  - NET_ADMIN
-              allowPrivilegeEscalation: false
         containers:
           app:
             image:
@@ -62,6 +27,7 @@ spec:
             env:
               TZ: Europe/London
               QBT_WEBUI_PORT: &port 80
+              QBT_TORRENTING_PORT: &torrentPort 50413
             probes:
               liveness: &probes
                 enabled: true
@@ -103,6 +69,14 @@ spec:
         ports:
           http:
             port: *port
+      bittorrent:
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.10.203
+        ports:
+          bittorrent-tcp:
+            port: *torrentPort
+            protocol: TCP
     route:
       app:
         hostnames:
@@ -126,22 +100,5 @@ spec:
         globalMounts:
           - path: /media/downloads/qbittorrent
             subPath: downloads/qbittorrent
-      gluetun-auth:
-        type: secret
-        name: qbittorrent-gluetun-secret
-        advancedMounts:
-          qbittorrent:
-            gluetun:
-              - path: *gluetunAuthPath
-                subPath: auth.toml
-      coredns:
-        type: configMap
-        name: qbittorrent-coredns
-        advancedMounts:
-          qbittorrent:
-            coredns:
-              - path: /etc/coredns/Corefile
-                subPath: Corefile
-                readOnly: true
       tmp:
         type: emptyDir
