@@ -10,7 +10,7 @@ spec:
       namespace: kube-system
       sectionName: https
   hostnames:
-    - ncnew.${CLUSTER_DOMAIN}
+    - cloud.${CLUSTER_DOMAIN}
   rules:
     - backendRefs: &backendRef
         - name: nextcloud
