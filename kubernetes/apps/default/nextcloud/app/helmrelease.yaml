@@ -54,18 +54,14 @@ spec:
       existingSecret:
         enabled: true
         secretName: nextcloud-secret
+        smtpHostKey: smtp-host
+        smtpUsernameKey: smtp-username
+        smtpPasswordKey: smtp-password
       host: cloud.${CLUSTER_DOMAIN}
       mail:
         enabled: true
         fromAddress: ${SECRET_SMTP_FROM_ADDRESS}
         domain: ${CLUSTER_DOMAIN}
-        smtp:
-          host: "${SECRET_SMTP_HOST}"
-          port: "${SECRET_SMTP_PORT}"
-          authtype: PLAIN
-          secure: "ssl"
-          name: "${SECRET_SMTP_USERNAME}"
-          password: "${SECRET_SMTP_PASSWORD}"
       securityContext:
         runAsUser: 1022
         runAsGroup: 1022
