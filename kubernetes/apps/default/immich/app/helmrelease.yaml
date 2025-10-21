@@ -94,7 +94,7 @@ spec:
           main:
             image:
               repository: alangrainger/immich-public-proxy
-              tag: 1.13.4
+              tag: 1.13.7
               pullPolicy: IfNotPresent
             env:
               IMMICH_URL: http://immich-server.default.svc.cluster.local:2283
