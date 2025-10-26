@@ -49,7 +49,7 @@ spec:
       guaranteedEngineManagerCPU: 12
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       replicaAutoBalance: best-effort
-      storageMinimalAvailablePercentage: 1
+      storageMinimalAvailablePercentage: "1"
     persistence:
       defaultDataLocality: best-effort
     ingress:
