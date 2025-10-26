@@ -41,8 +41,10 @@ nodes:
           officialExtensions:
             - siderolabs/i915
             - siderolabs/intel-ucode
+            - siderolabs/mei
             - siderolabs/iscsi-tools
             - siderolabs/util-linux-tools
+            - siderolabs/nfsrahead
     userVolumes:
       - name: longhorn
         provisioning:
