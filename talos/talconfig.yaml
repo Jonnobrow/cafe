@@ -129,5 +129,4 @@ controlPlane:
     intel.feature.node.kubernetes.io/gpu: "true"
     node.longhorn.io/create-default-disk: "true"
   patches:
-    - "@./patches/controller/admission-controller-patch.yaml"
     - "@./patches/controller/cluster.yaml"
