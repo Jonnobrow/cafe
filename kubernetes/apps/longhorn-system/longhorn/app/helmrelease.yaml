@@ -41,7 +41,7 @@ spec:
       allowCollectingLonghornUsageMetrics: false
       defaultDataPath: /var/mnt/longhorn
       # Running on dedicated disk, so no need to reserve
-      storageReservedPercentageForDefaultDisk: 0
+      storageReservedPercentageForDefaultDisk: "0"
       createDefaultDiskLabeledNodes: true
       defaultDataLocality: best-effort
       defaultLonghornStaticStorageClass: longhorn
