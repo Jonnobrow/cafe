@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: cappuccino.internal
-    path: /photos/immich
+    path: /mnt/tank/photos/immich
   # Note: The first two options are strictly for NFSv4.2
   mountOptions:
     - nfsvers=4.2
