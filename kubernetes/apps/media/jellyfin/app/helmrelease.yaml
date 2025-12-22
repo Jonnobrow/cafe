@@ -119,7 +119,7 @@ spec:
       media:
         type: nfs
         server: cappuccino.internal
-        path: /media
+        path: /mnt/tank/media
         globalMounts:
           - path: /media
             readOnly: false
