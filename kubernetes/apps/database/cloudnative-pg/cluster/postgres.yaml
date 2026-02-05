@@ -48,11 +48,11 @@ spec:
         barmanObjectName: r2
         serverName: postgres
   # Uncomment to restore
-  #bootstrap:
-  #  recovery:
-  #    source: clusterBackup
-  #externalClusters:
-  #  - name: clusterBackup
-  #    plugin:
-  #      name: barman-cloud.cloudnative-pg.io
-  #      parameters: *parameters
+  bootstrap:
+    recovery:
+      source: clusterBackup
+  externalClusters:
+    - name: clusterBackup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters: *parameters
