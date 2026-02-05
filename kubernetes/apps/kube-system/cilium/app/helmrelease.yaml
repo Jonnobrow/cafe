@@ -34,8 +34,6 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: cilium-values
-  values:
-    operator: {}
     # NOTE: operator.tolerations removed to fix Cilium 1.18.x Helm template bug (issue #40937)
     # Previously: tolerations: []
     #
