@@ -100,8 +100,34 @@ spec:
               IMMICH_URL: http://immich-server.default.svc.cluster.local:2283
               CONFIG: |
                 {
-                  "showGalleryTitle": true,
-                  "allowDownloadAll": 1
+                  "ipp": {
+                    "responseHeaders": {
+                      "Cache-Control": "public, max-age=2592000",
+                      "Access-Control-Allow-Origin":  "*"
+                    },
+                    "singleImageGallery": false,
+                    "singleItemAutoOpen": true,
+                    "downloadOriginalPhoto": true,
+                    "downloadedFilename": 0,
+                    "allowDownloadAll": 1,
+                    "allowSlugLinks": true,
+                    "showHomePage": true,
+                    "showGalleryTitle": true,
+                    "showMetadata": {
+                      "description": false
+                    },
+                    "customInvalidResponse": false
+                  },
+                  "lightGallery": {
+                    "controls": true,
+                    "download": true,
+                    "customSlideName": true,
+                    "mobileSettings": {
+                      "controls": false,
+                      "showCloseIcon": true,
+                      "download": true
+                    }
+                  }
                 }
 
     service:
