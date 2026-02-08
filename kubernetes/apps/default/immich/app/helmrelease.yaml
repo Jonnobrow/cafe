@@ -98,6 +98,11 @@ spec:
               pullPolicy: IfNotPresent
             env:
               IMMICH_URL: http://immich-server.default.svc.cluster.local:2283
+              CONFIG: |
+                {
+                  "showGalleryTitle": true,
+                  "allowDownloadAll": 1
+                }
 
     service:
       server:
