@@ -46,6 +46,27 @@ spec:
           envFrom:
             - secretRef:
                 name: nextcloud-secret
+        - name: create-redis-session-ini
+          image: busybox:1.36-uclibc
+          command:
+            - sh
+            - -c
+            - touch /mnt/redis-session.ini
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: php-confd
+              mountPath: /mnt
+      extraVolumeMounts:
+        - name: php-confd
+          mountPath: /usr/local/etc/php/conf.d/redis-session.ini
+          subPath: redis-session.ini
+      extraVolumes:
+        - name: php-confd
+          emptyDir: {}
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local.
