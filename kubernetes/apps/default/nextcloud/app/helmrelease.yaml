@@ -55,8 +55,9 @@ spec:
               "chown -R 1000:1000 /var/www/data; chmod -R 770 /var/www/data",
             ]
           volumeMounts:
-            - name: nextcloud-data
+            - name: nextcloud
               mountPath: /var/www/data
+              subPath: data
           securityContext:
             runAsUser: 0
       extraEnv:
