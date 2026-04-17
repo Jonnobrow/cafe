@@ -62,25 +62,7 @@ spec:
         runAsGroup: 1022
         runAsNonRoot: true
         readOnlyRootFilesystem: false
-      podSecurityContext:
-        fsGroup: 33
-        runAsGroup: 1022 # www-data
-        runAsNonRoot: true
-        runAsUser: 1022 # www-data
-        seccompProfile:
-          type: RuntimeDefault
       configs:
-        redis.config.php: |-
-          <?php
-          $CONFIG = array (
-            'memcache.local' => '\\OC\\Memcache\\APCu',
-            'memcache.distributed' => '\\OC\\Memcache\\Redis',
-            'memcache.locking' => '\\OC\\Memcache\\Redis',
-            'redis' => array(
-              'host' => 'dragonfly.database.svc.cluster.local.',
-              'port' => 6379,
-            ),
-          );
         proxy.config.php: |-
           <?php
           $CONFIG = array (
@@ -152,8 +134,6 @@ spec:
         secretName: nextcloud-secret
         usernameKey: INIT_POSTGRES_USER
         passwordKey: INIT_POSTGRES_PASS
-    redis:
-      enabled: false
     ingress:
       enabled: false
     persistence:
