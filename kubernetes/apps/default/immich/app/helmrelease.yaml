@@ -105,31 +105,29 @@ spec:
                       "Cache-Control": "public, max-age=2592000",
                       "Access-Control-Allow-Origin":  "*"
                     },
-                    "singleImageGallery": false,
-                    "singleItemAutoOpen": true,
+                    "gallery": {
+                      "singleImage": false,
+                      "singleItemAutoOpen": true,
+                      "showTitle": true,
+                      "showDescription": true,
+                      "groupByDate": false
+                    },
                     "downloadOriginalPhoto": true,
                     "downloadedFilename": 0,
                     "allowDownloadAll": 1,
                     "allowSlugLinks": true,
                     "showHomePage": true,
-                    "showGalleryTitle": true,
                     "showMetadata": {
                       "description": false
                     },
                     "customInvalidResponse": false
                   },
-                  "lightGallery": {
-                    "controls": true,
-                    "download": true,
-                    "customSlideName": true,
-                    "mobileSettings": {
-                      "controls": false,
-                      "showCloseIcon": true,
-                      "download": true
-                    }
+                  "lightbox": {
+                    "showArrows": true,
+                    "showDownload": true,
+                    "mobileArrows": false
                   }
                 }
-
     service:
       server:
         controller: server
