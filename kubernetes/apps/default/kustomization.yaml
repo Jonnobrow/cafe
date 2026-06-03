@@ -10,3 +10,4 @@ resources:
   - ./paperless-ngx/ks.yaml
   - ./nextcloud/ks.yaml
   - ./immich/ks.yaml
+  - ./dawarich/ks.yaml
