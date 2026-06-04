@@ -50,11 +50,10 @@ spec:
               requests:
                 memory: 1024Mi
               limits:
-                memory: 10Gi
+                memory: 2Gi
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
-              readOnlyRootFilesystem: true
         pod:
           securityContext:
             runAsNonRoot: true
