@@ -11,3 +11,4 @@ resources:
   - ./nextcloud/ks.yaml
   - ./immich/ks.yaml
   - ./dawarich/ks.yaml
+  - ./photon/ks.yaml
