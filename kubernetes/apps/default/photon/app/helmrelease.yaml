@@ -1,0 +1,94 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/refs/heads/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: photon
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  install:
+    disableWait: true
+  upgrade:
+    disableWait: true
+  values:
+    controllers:
+      photon:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          photon:
+            image:
+              repository: registry.kantai.xyz/jfroy/photon-docker
+              tag: 2.0.1-uv_no_sync@sha256:8a516fc9ecdbb3d564900563e53d76b9b406460af686641e074683f628b7da39
+            command: ["uv"]
+            args: ["run", "--no-sync", "-m", "src.process_manager"]
+            env:
+              PGID: 9011
+              PUID: 9011
+              TZ: ${TIMEZONE}
+              UPDATE_STRATEGY: PARALLEL
+            probes:
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status
+                    port: 2322
+              readiness: *probe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status
+                    port: 2322
+                  failureThreshold: 720
+            resources:
+              requests:
+                memory: 1024Mi
+              limits:
+                memory: 10Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              readOnlyRootFilesystem: true
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 9011
+            runAsGroup: 9011
+            fsGroup: 9011
+            fsGroupChangePolicy: OnRootMismatch
+    persistence:
+      cache:
+        type: emptyDir
+        sizeLimit: 1Gi
+        globalMounts:
+          - path: /photon/.cache
+      data:
+        existingClaim: "{{ .Release.Name }}"
+        globalMounts:
+          - path: /photon/data
+    service:
+      photon:
+        controller: photon
+        ports:
+          http:
+            port: 2322
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+              name: photon
+            patch: |
+              - op: add
+                path: /spec/progressDeadlineSeconds
+                value: 7200

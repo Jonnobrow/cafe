@@ -54,6 +54,9 @@ spec:
               RAILS_CACHE_DB: 10
               RAILS_JOB_QUEUE_DB: 11
               RAILS_WS_DB: 12
+              # Geocoding
+              PHOTON_API_HOST: photon.default.svc.cluster.local:2322
+              PHOTON_API_USE_HTTPS: false
 
             envFrom: *envFrom
             probes:
