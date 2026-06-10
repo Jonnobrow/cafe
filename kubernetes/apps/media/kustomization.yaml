@@ -11,3 +11,4 @@ resources:
   - ./sonarr/ks.yaml
   - ./flaresolverr/ks.yaml
   - ./jellyfin/ks.yaml
+  - ./audiobookshelf/ks.yaml
