@@ -12,4 +12,4 @@ resources:
   - ./flaresolverr/ks.yaml
   - ./jellyfin/ks.yaml
   - ./audiobookshelf/ks.yaml
-  - ./readmeabook/ks.yaml
+  - ./shelfmark/ks.yaml
