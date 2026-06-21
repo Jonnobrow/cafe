@@ -6,7 +6,7 @@ metadata:
   name: postgres
 spec:
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgis
-  imageName: ghcr.io/cloudnative-pg/postgis:17-3-standard-trixie
+  imageName: ghcr.io/cloudnative-pg/postgis:18-3-standard-trixie
   instances: 3
   primaryUpdateStrategy: unsupervised
   storage:
@@ -47,7 +47,7 @@ spec:
       isWALArchiver: true
       parameters: &parameters
         barmanObjectName: r2
-        serverName: postgres
+        serverName: postgres-18
   # Uncomment to restore
   #bootstrap:
   #  recovery:
