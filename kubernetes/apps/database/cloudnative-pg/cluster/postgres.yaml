@@ -37,10 +37,6 @@ spec:
           - /usr/lib/postgresql/18/lib
         extension_control_path:
           - /usr/share/postgresql/18/
-      - name: pgvector
-        image:
-          # renovate: suite=trixie-pgdg depName=postgresql-18-pgvector
-          reference: ghcr.io/cloudnative-pg/pgvector:0.8.2-18-trixie
     shared_preload_libraries:
       - "vchord.so"
   nodeMaintenanceWindow:
