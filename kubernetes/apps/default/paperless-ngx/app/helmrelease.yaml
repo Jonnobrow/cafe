@@ -20,6 +20,8 @@ spec:
   values:
     controllers:
       paperless-ngx:
+        labels:
+          postgres: "true"
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:

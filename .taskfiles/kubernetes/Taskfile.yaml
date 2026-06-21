@@ -1,0 +1,65 @@
+---
+version: "3"
+
+vars:
+  KUBERNETES_RESOURCES_DIR: "{{.ROOT_DIR}}/.taskfiles/kubernetes/resources"
+
+tasks:
+  hr-restart:
+    desc: Restart all failed Helm Releases
+    cmds:
+      - kubectl get hr --all-namespaces | grep False | awk '{print $2, $1}' | xargs -L1 bash -c 'flux suspend hr $0 -n $1'
+      - kubectl get hr --all-namespaces | grep False | awk '{print $2, $1}' | xargs -L1 bash -c 'flux resume hr $0 -n $1'
+    preconditions:
+      - which kubectl
+
+  browse-pvc:
+    desc: Mount a PVC to an temp container [NS=default] [CLAIM=required]
+    interactive: true
+    cmd: kubectl browse-pvc --namespace {{.NS}} {{.CLAIM}}
+    vars:
+      NS: '{{.NS | default "default"}}'
+    requires:
+      vars: [CLAIM]
+    preconditions:
+      - kubectl --namespace {{.NS}} get persistentvolumeclaims {{.CLAIM}}
+
+  drain:
+    desc: Drain a node [NODE=required]
+    cmd: kubectl drain {{.NODE}} --ignore-daemonsets --delete-emptydir-data --force
+    requires:
+      vars: [NODE]
+    preconditions:
+      - which kubectl
+
+  delete-failed-pods:
+    desc: Delete pods with a Failed/Pending/Succeeded phase
+    cmds:
+      - for:
+          matrix:
+            PHASE: [Failed, Pending, Succeeded]
+        cmd: kubectl delete pods --field-selector status.phase={{.ITEM.PHASE}} -A --ignore-not-found=true
+    preconditions:
+      - which kubectl
+
+  ks-*:
+    desc: Suspend or resume Kustomizations
+    cmds:
+      - kubectl get ns -o jsonpath='{.items[*].metadata.name}' | xargs -n1 flux {{.STATE}} ks --all --namespace
+    vars:
+      STATE: "{{index .MATCH 0}}"
+    preconditions:
+      - '[[ "{{.STATE}}" == "suspend" || "{{.STATE}}" == "resume" ]]'
+      - which flux kubectl
+
+  postgres-*:
+    desc: Scale down Apps that are using the Postgres Cluster
+    cmds:
+      - kubectl get deployments --all-namespaces -l postgres=true --no-headers | awk '{print $2, $1}' | xargs -L1 bash -c 'flux {{.STATE}} kustomization $0 -n $1'
+      - kubectl get deployments --all-namespaces -l postgres=true --no-headers | awk '{print $2, $1}' | xargs -L1 bash -c 'flux {{.STATE}} helmrelease $0 -n $1'
+      - kubectl get deployments --all-namespaces -l postgres=true --no-headers | awk '{print $2, $1}' | xargs -L1 bash -c 'kubectl scale --replicas {{if eq .STATE "suspend"}}0{{else}}1{{end}} deployment $0 -n $1'
+    vars:
+      STATE: "{{index .MATCH 0}}"
+    preconditions:
+      - '[[ "{{.STATE}}" == "suspend" || "{{.STATE}}" == "resume" ]]'
+      - which kubectl

@@ -24,6 +24,7 @@ includes:
   utils: .taskfiles/utils
   talos: .taskfiles/talos
   resticprofile: .taskfiles/resticprofile
+  kubernetes: .taskfiles/kubernetes
 
 tasks:
   default: task --list

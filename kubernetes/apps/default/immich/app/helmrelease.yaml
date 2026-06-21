@@ -24,6 +24,8 @@ spec:
     controllers:
       server:
         strategy: RollingUpdate
+        labels:
+          postgres: "true"
         annotations:
           secret.reloader.stakater.com/reload: immich
           configmap.reloader.stakater.com/reload: immich

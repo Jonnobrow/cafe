@@ -39,6 +39,8 @@ spec:
       pullPolicy: IfNotPresent
     nginx:
       enabled: true
+    deploymentLabels:
+      postgres: "true"
     nextcloud:
       extraInitContainers:
         - name: init-db
