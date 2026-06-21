@@ -12,3 +12,4 @@ resources:
   - ./immich/ks.yaml
   - ./dawarich/ks.yaml
   - ./photon/ks.yaml
+  - ./vaultwarden/ks.yaml

@@ -1,0 +1,94 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vaultwarden
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  values:
+    controllers:
+      vaultwarden:
+        labels:
+          postgres: "true"
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18@sha256:5086f94abc783f1147d7c2a32c01db00ab594820026e4f6a82ac2af3dbde7fc7
+            envFrom: &envFrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/dani-garcia/vaultwarden
+              tag: 1.36.0@sha256:d626d04934cd1192ad8ced1adb975099fca78cec33ab467d2d3c923cde7f3b0c
+            env:
+              TZ: "${TIMEZONE}"
+              DATA_FOLDER: "/data"
+              DOMAIN: https://bitwarden.${CLUSTER_DOMAIN}
+              SIGNUPS_ALLOWED: false
+              SHOW_PASSWORD_HINT: false
+            envFrom: *envFrom
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            port: 80
+    route:
+      app:
+        forceRename: "{{ .Release.Name }}"
+        hostnames:
+          - "bitwarden.${CLUSTER_DOMAIN}"
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
+      admin:
+        annotations:
+          gatus.home-operations.com/enabled: "false"
+        hostnames:
+          - "bitwarden.${CLUSTER_DOMAIN}"
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /admin
+    persistence:
+      data:
+        existingClaim: "{{ .Release.Name }}"
+        globalMounts:
+          - path: /data
