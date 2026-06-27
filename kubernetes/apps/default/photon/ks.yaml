@@ -9,11 +9,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../components/volsync
-  dependsOn:
-    - name: longhorn
-      namespace: longhorn-system
   path: ./kubernetes/apps/default/photon/app
   prune: true
   sourceRef:
@@ -27,5 +22,3 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 250Gi
-      VOLSYNC_SCHEDULE: "0 0 * * *"
