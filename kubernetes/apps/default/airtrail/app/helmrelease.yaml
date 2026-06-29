@@ -26,7 +26,7 @@ spec:
                   name: airtrail
             image:
               repository: johly/airtrail
-              tag: v3.10.0
+              tag: v3.11.1
             probes:
               liveness:
                 enabled: true
