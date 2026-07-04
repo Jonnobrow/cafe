@@ -114,13 +114,16 @@ spec:
                       "showDescription": true,
                       "groupByDate": false
                     },
-                    "downloadOriginalPhoto": true,
+                    "maxDownloadQuality": "original",
                     "downloadedFilename": 0,
-                    "allowDownloadAll": 1,
+                    "allowDownload": 1,
                     "allowSlugLinks": true,
                     "showHomePage": true,
                     "showMetadata": {
-                      "description": false
+                      "description": {
+                        "caption": false,
+                        "sidebar": false
+                      }
                     },
                     "customInvalidResponse": false
                   },
