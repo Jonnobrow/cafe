@@ -81,7 +81,7 @@ spec:
           sidekick:
             image:
               repository: mirror.gcr.io/freikin/dawarich
-              tag: 1.8.0@sha256:139424dda595c36f18438c6e7410c03735aa6843e77ff82af02663fa52f6eed2
+              tag: 1.10.0@sha256:25ba1dc02e5571cc915bd104aae9c4c28929848ad1741c1829f5c40f86489a16
             command: ["sidekiq-entrypoint.sh"]
             args: ["sidekiq"]
             env: *env
