@@ -69,8 +69,8 @@ spec:
           <?php
           $CONFIG = array (
             'overwriteprotocol' => 'https',
-            'overwrite.cli.url' => 'https://cloud.${SECRET_DOMAIN}',
-            'overewritehost' => 'cloud.${SECRET_DOMAIN}',
+            'overwrite.cli.url' => 'https://cloud.${CLUSTER_DOMAIN}',
+            'overewritehost' => 'cloud.${CLUSTER_DOMAIN}',
             'check_data_directory_permissions' => false,
             'trusted_proxies' => array(
               0 => '127.0.0.1',
