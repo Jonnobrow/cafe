@@ -52,7 +52,7 @@ spec:
               PUBLIC_URL: https://adventurelog-backend.${CLUSTER_DOMAIN}
               FRONTEND_URL: https://adventurelog.${CLUSTER_DOMAIN}
               CSRF_TRUSTED_ORIGINS: https://adventurelog-backend.${CLUSTER_DOMAIN},https://adventurelog.${CLUSTER_DOMAIN}
-              DEBUG: "true"
+              DEBUG: "False"
               DJANGO_ADMIN_USERNAME: admin
               ENABLE_RATE_LIMITS: "true"
             envFrom: *secret
