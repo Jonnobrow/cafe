@@ -1,0 +1,102 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app adventurelog
+spec:
+  interval: 15m
+  timeout: 5m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  maxHistory: 2
+  values:
+    controllers:
+      adventurelog:
+        labels:
+          postgres: "true"
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.4@sha256:ebd9d30add17acdf935d73eb004758c7dfd9388aaa605fda70ad74378ab92aec
+              pullPolicy: IfNotPresent
+            envFrom: &secret
+              - secretRef:
+                  name: adventurelog-secret
+        containers:
+          frontend:
+            image:
+              repository: ghcr.io/seanmorley15/adventurelog-frontend
+              tag: latest@sha256:edd79220f0def1dbea5b5d56636621f6cfdb454db9c00a8ce436a8ab489c5e99
+            env:
+              PUBLIC_SERVER_URL: "http://adventurelog.default.svc.cluster.local:8000"
+              BODY_SIZE_LIMIT: Infinity
+              ORIGIN: "https://adventurelog.${CLUSTER_DOMAIN}"
+            probes:
+              liveness: &probes
+                enabled: false
+              readiness: *probes
+              startup: *probes
+            resources:
+              requests:
+                cpu: 50m
+                memory: 100Mi
+          server:
+            image:
+              repository: ghcr.io/seanmorley15/adventurelog-backend
+              tag: latest@sha256:cfcd78940dffdc967d1c0e38aa5ff038dbce8b42d92b22ae9658a4fa4cb5573d
+            env:
+              PUBLIC_URL: https://adventurelog-backend.${CLUSTER_DOMAIN}
+              FRONTEND_URL: https://adventurelog.${CLUSTER_DOMAIN}
+              CSRF_TRUSTED_ORIGINS: https://adventurelog-backend.${CLUSTER_DOMAIN},https://adventurelog.${CLUSTER_DOMAIN}
+              DEBUG: "true"
+              DJANGO_ADMIN_USERNAME: admin
+              ENABLE_RATE_LIMITS: "true"
+            envFrom: *secret
+            probes:
+              liveness: &probes
+                enabled: false
+              readiness: *probes
+              startup: *probes
+            resources:
+              requests:
+                cpu: 125m
+                memory: 500Mi
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: &frontend-port 3000
+          base:
+            port: &server-port 8000
+    route:
+      frontend:
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        hostnames: ["adventurelog.${CLUSTER_DOMAIN}"]
+        rules:
+          - backendRefs:
+              - name: *app
+                port: *frontend-port
+      server:
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        hostnames: ["adventurelog-backend.${CLUSTER_DOMAIN}"]
+        rules:
+          - backendRefs:
+              - name: *app
+                port: *server-port
+    persistence:
+      config:
+        enabled: true
+        existingClaim: *app
+        globalMounts:
+          - path: /code/media
