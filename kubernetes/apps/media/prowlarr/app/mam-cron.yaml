@@ -26,7 +26,12 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
-
+          securityContext:
+            fsGroup: 101
+            runAsUser: 100
+            runAsGroup: 101
+            fsGroupChangePolicy: OnRootMismatch
+            runAsNonRoot: true
           containers:
             - name: mam
               image: curlimages/curl:latest
