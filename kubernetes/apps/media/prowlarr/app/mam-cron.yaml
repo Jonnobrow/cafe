@@ -1,0 +1,77 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mam-cookies
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Mi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mam-dynamic-seedbox
+  namespace: media
+spec:
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+
+          containers:
+            - name: mam
+              image: curlimages/curl:latest
+
+              env:
+                - name: MAM_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: mam-session
+                      key: mam_id
+                - name: MAM_URL
+                  value: "https://t.myanonamouse.net/json/dynamicSeedbox.php"
+
+              volumeMounts:
+                - name: cookies
+                  mountPath: /data
+
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  COOKIE_FILE=/data/mam.cookies
+
+                  if [ -f "$COOKIE_FILE" ]; then
+                    echo "Using existing MAM cookie jar"
+                    curl \
+                      --fail \
+                      --silent \
+                      --show-error \
+                      -c "$COOKIE_FILE" \
+                      -b "$COOKIE_FILE" \
+                      "$MAM_URL"
+                  else
+                    echo "No cookie jar found; bootstrapping from MAM session"
+
+                    curl \
+                      --fail \
+                      --silent \
+                      --show-error \
+                      -c "$COOKIE_FILE" \
+                      -b "mam_id=$MAM_ID" \
+                      "$MAM_URL"
+                  fi
+
+              volumes:
+                - name: cookies
+                  persistentVolumeClaim:
+                    claimName: mam-cookies

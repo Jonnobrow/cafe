@@ -5,3 +5,5 @@ kind: Kustomization
 resources:
   - ./secret.sops.yaml
   - ./helmrelease.yaml
+  - ./mam-cron.yaml
+  - ./mam-session-secret.sops.yaml
