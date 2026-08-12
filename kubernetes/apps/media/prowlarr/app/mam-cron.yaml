@@ -71,7 +71,7 @@ spec:
                       "$MAM_URL"
                   fi
 
-              volumes:
-                - name: cookies
-                  persistentVolumeClaim:
-                    claimName: mam-cookies
+          volumes:
+            - name: cookies
+              persistentVolumeClaim:
+                claimName: mam-cookies
