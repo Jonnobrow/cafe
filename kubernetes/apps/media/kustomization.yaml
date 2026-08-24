@@ -13,3 +13,4 @@ resources:
   - ./jellyfin/ks.yaml
   - ./audiobookshelf/ks.yaml
   - ./shelfmark/ks.yaml
+  - ./grimmory/ks.yaml
