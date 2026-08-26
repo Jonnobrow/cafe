@@ -133,7 +133,7 @@ spec:
               - path: /books
                 subPath: books
               - path: /bookdrop
-                subPath: downloads/qbittorrent/books
+                subPath: bookdrop
       mysqld:
         type: emptyDir
         medium: Memory
