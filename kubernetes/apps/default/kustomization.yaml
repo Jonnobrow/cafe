@@ -13,5 +13,3 @@ resources:
   - ./dawarich/ks.yaml
   - ./photon/ks.yaml
   - ./vaultwarden/ks.yaml
-  - ./airtrail/ks.yaml
-  - ./adventurelog/ks.yaml
