@@ -33,7 +33,7 @@ spec:
           app:
             image:
               repository: freikin/dawarich
-              tag: 1.14.4@sha256:2fecbaf093b9544b5733fe972d422100c2bc5be896e706c58eab8bdb6860fe06
+              tag: 1.17.0@sha256:207dc86f8baa8fcf5b585f31186bf81b55added9c102a96f308d640e964ea60f
             command: ["web-entrypoint.sh"]
             args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
             env: &env
